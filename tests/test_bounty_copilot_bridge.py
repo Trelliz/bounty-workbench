@@ -81,9 +81,11 @@ class TestBountyCopilotBridge(unittest.TestCase):
             (home/'usage.json').write_text(json.dumps({
                 'date': b.utcnow().date().isoformat(), 'attempts': 1
             }))
-            with mock.patch.object(b, 'github_issue', side_effect=AssertionError('unexpected web call')):
-                with mock.patch.object(b, 'invoke_copilot', side_effect=AssertionError('unexpected AI')):
-                    self.assertEqual(b.run(jobs, home), 0)
+            with mock.patch.object(b.pwd, 'getpwnam') as pw:
+                pw.return_value.pw_uid = os.getuid()
+                with mock.patch.object(b, 'github_issue', side_effect=AssertionError('unexpected web call')):
+                    with mock.patch.object(b, 'invoke_copilot', side_effect=AssertionError('unexpected AI')):
+                        self.assertEqual(b.run(jobs, home), 0)
 
 if __name__ == '__main__':
     unittest.main()
