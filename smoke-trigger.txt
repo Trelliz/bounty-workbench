@@ -1,0 +1,1 @@
+Copilot CLI smoke test — one run only. The workflow produces no code or submitted PR.
