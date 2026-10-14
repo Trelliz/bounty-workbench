@@ -1,0 +1,47 @@
+name: One-time free local model check
+# Diagnostic on an exact temporary branch only. No recurring cloud usage.
+on:
+  push:
+    branches:
+      - verify-local-ai-once
+    paths:
+      - local-ai-trigger.txt
+permissions:
+  contents: read
+jobs:
+  check:
+    runs-on: ubuntu-latest
+    timeout-minutes: 16
+    steps:
+      - name: Start an open-source model on standard runner
+        run: |
+          docker run --detach --rm --name one-time-local-ollama \
+            --publish 127.0.0.1:11434:11434 \
+            --env OLLAMA_NUM_PARALLEL=1 \
+            --env OLLAMA_MAX_LOADED_MODELS=1 \
+            ollama/ollama:latest
+          for i in $(seq 1 45); do
+            curl --fail --silent http://127.0.0.1:11434/api/tags >/dev/null && break
+            sleep 2
+          done
+          curl --fail --silent http://127.0.0.1:11434/api/tags >/dev/null
+      - name: Download small open model (no paid APIs)
+        run: docker exec one-time-local-ollama ollama pull qwen2.5-coder:1.5b
+      - name: Test one short coding response
+        run: |
+          python3 - <<'PY'
+          import json,urllib.request
+          data=json.dumps({
+              "model":"qwen2.5-coder:1.5b",
+              "prompt":"Write a single Python function called square(x) returning x*x. Code only.",
+              "stream":False,
+              "options":{"num_predict":90,"num_ctx":1024,"temperature":0}
+          }).encode()
+          req=urllib.request.Request("http://127.0.0.1:11434/api/generate", data=data,headers={"Content-Type":"application/json"},method="POST")
+          with urllib.request.urlopen(req,timeout=300) as response:
+              obj=json.load(response)
+          answer=obj.get("response","")
+          print("UNREVIEWED model output:\n"+answer[:3000])
+          if "def square" not in answer: raise SystemExit("No expected code produced")
+          print("Local AI basic inference OK; NOT a real bounty solution or test.")
+          PY
