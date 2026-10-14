@@ -1,0 +1,26 @@
+name: One-time Copilot CLI authentication check
+# Only a push to the exact branch below can trigger this job.
+# This workflow makes ONE fixed Copilot request, with no external issue text.
+on:
+  push:
+    branches:
+      - verify-copilot-once
+    paths:
+      - smoke-trigger.txt
+permissions:
+  contents: read
+  copilot-requests: write
+
+jobs:
+  verify:
+    runs-on: ubuntu-latest
+    timeout-minutes: 8
+    steps:
+      - name: Install official Copilot CLI
+        run: npm install --global @github/copilot
+      - name: One harmless prompt (included Copilot credits only)
+        env:
+          GITHUB_TOKEN: ${{ github.token }}
+        run: |
+          copilot -p 'Reply with exactly the word READY. Do not open files, use tools, or make changes.' \
+            --max-ai-credits=30 --no-ask-user -s
