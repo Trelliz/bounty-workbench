@@ -1,6 +1,6 @@
 # Bounty Workbench — experimental cloud coding worker
 
-**Status: uploaded for review; AI execution runs ONLY when manually triggered.**
+**Status: draft worker uploaded; GitHub Copilot CLI is blocked by policy. Local-model runner proof of concept succeeded. No autonomous coding or submission is active.**
 
 This repository contains a manual, opt-in GitHub Actions worker that can ask GitHub Copilot CLI to draft a code patch for an open public issue. It is separate from the user's SatGate project and from the Linux VPS bounty scanner.
 
@@ -35,3 +35,11 @@ These local unit tests test input parsing and diff collection only; they make no
 ## Future work
 
 A future bridge would take **verified** candidates from the 2-minute VPS scanner, authenticate securely and dispatch to a reviewed coding worker. Today, GitHub scan matches are not proof of funding, AI eligibility, or claimability. Automated submission should remain off until those checks and security safeguards exist.
+
+## Verified execution results — October 14, 2026
+
+- **Copilot CLI GitHub Actions test**: did **NOT** work for the current account, returning `Access denied by policy settings` before generating any answer. [Failed run](https://github.com/Trelliz/bounty-workbench/actions/runs/38489608509). Do not assume activating Copilot Free allows Copilot API use inside Actions.
+- **Zero-payment alternative**: a one-time test using the open-source `qwen2.5-coder:1.5b` model through Ollama on a standard public-repository GitHub Actions runner **succeeded** without GitHub Copilot or API credentials. The model generated a short `square(x)` function. [Successful run](https://github.com/Trelliz/bounty-workbench/actions/runs/38489761652).
+- **Limitations**: The Ollama result is a proof of inference ONLY. It did not analyze a paid bounty, run a repository's tests, produce a reviewed patch, create a PR, or earn any sats. A 1.5B model may be inadequate for many real bugs.
+- **Next build step**: safely turn the isolated local-model test into an opt-in read-only target checkout and artifact-producing patch worker, with validated candidate filtering and an explicit size/resource cap. Keep automatic external PR submission disabled.
+- No payment method was added or needed for the open-source model test.
