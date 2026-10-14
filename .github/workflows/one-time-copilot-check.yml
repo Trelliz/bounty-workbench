@@ -9,7 +9,6 @@ on:
       - smoke-trigger.txt
 permissions:
   contents: read
-  copilot-requests: write
 
 jobs:
   verify:
@@ -20,7 +19,7 @@ jobs:
         run: npm install --global @github/copilot
       - name: One harmless prompt (included Copilot credits only)
         env:
-          GITHUB_TOKEN: ${{ github.token }}
+          COPILOT_GITHUB_TOKEN: ${{ secrets.COPILOT_PAT }}
         run: |
           copilot -p 'Reply with exactly the word READY. Do not open files, use tools, or make changes.' \
             --max-ai-credits=30 --no-ask-user -s
