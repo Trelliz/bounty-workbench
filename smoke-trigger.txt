@@ -1,1 +1,2 @@
 One-time fixed Copilot PAT authentication smoke test.
+Retry after correcting documented minimum credit cap.
