@@ -79,3 +79,7 @@ systemctl disable --now bounty-copilot-bridge.timer
 ```
 
 **Security:** VPS root's already-authorized GitHub device-OAuth session is saved as plaintext on this headless host. The installer makes one other plaintext copy for the dedicated unprivileged service account (file mode `0600`, directory mode `0700`). Keep this VPS updated and access restricted. Do not paste tokens or config files into chats, logs or GitHub. Do not allow untrusted issue text to control shell commands. This is a capped review pipeline, not a guarantee of money or a complete autonomous coding agent.
+
+## Automated Copilot source patch generation (new)
+
+The real auto-coding worker is now implemented and unit-tested in `scripts/bounty_autocoder.py`. It upgrades the already-installed scanner-to-Copilot bridge and **generates local draft patches**, rather than just reviewing bounty ads. To activate it on the VPS, use the ONE command in [AUTOCODER.md](AUTOCODER.md). This step has not been performed on the VPS yet. Its initial release does not run outsider tests, submit PRs or guarantee payouts. It caps Copilot to one attempt/day and saves patch files for inspection.
