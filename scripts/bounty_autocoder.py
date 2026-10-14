@@ -258,7 +258,9 @@ def run(queue, home, *, cli='/usr/local/bin/copilot', min_sats=10000,
                     usage = {'date': date, 'attempts': 0}
                 usage['attempts'] = int(usage.get('attempts', 0)) + 1
                 bridge.save_json_atomic(home / 'usage.json', usage)
-                exit_code, answer, error = model(cli, prompt, str(checkout))
+                # Run Copilot in an EMPTY dir: downloaded repo may contain malicious AGENTS.md instructions.
+                with tempfile.TemporaryDirectory(prefix='copilot-clean-', dir=home) as clean:
+                    exit_code, answer, error = model(cli, prompt, clean)
                 if exit_code != 0:
                     raise RuntimeError('Copilot failed: ' + error[-250:])
                 patch = extract_patch(answer)
