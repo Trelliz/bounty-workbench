@@ -1,0 +1,35 @@
+name: Check personal token validity once
+on:
+  push:
+    branches:
+      - verify-pat-validity-once
+    paths:
+      - validate-pat-trigger.txt
+permissions:
+  contents: read
+jobs:
+  validity:
+    runs-on: ubuntu-latest
+    timeout-minutes: 4
+    steps:
+      - name: Check token recognized by GitHub (no token value logged)
+        env:
+          COPILOT_GITHUB_TOKEN: ${{ secrets.COPILOT_PAT }}
+        run: |
+          python3 - <<'PY'
+          import os, urllib.request, urllib.error
+          token=os.environ.get("COPILOT_GITHUB_TOKEN", "")
+          if not token:
+              print("Result: GitHub secret COPILOT_PAT is empty or unavailable.")
+              raise SystemExit(1)
+          print("Token type: "+("fine-grained" if token.startswith("github_pat_") else "classic (unsupported for Copilot)" if token.startswith("ghp_") else "other"))
+          req=urllib.request.Request("https://api.github.com/user",headers={"Authorization":"Bearer "+token,"Accept":"application/vnd.github+json","User-Agent":"bounty-workbench-smoke-check"})
+          try:
+              with urllib.request.urlopen(req,timeout=10) as resp:
+                  print("GitHub user API HTTP:",resp.status)
+                  print("Token recognized by GitHub API.")
+          except urllib.error.HTTPError as e:
+              print("GitHub user API HTTP:",e.code)
+              print("Token not usable to authenticate to /user.")
+              raise SystemExit(2)
+          PY
