@@ -13,7 +13,8 @@ on:
         type: string
 
 # Manual-only. NO automatic polling, PR submission, or payments.
-# Copilot consumes AI credits. Confirm ZERO paid additional usage in account billing first.
+# Copilot consumes INCLUDED AI credits. Do not add a payment method or enable paid usage.
+# This workflow only runs on an explicit manual dispatch, never on push or schedule.
 permissions:
   contents: read
   copilot-requests: write
@@ -24,8 +25,7 @@ concurrency:
 
 jobs:
   draft:
-    # Fail closed. Until explicitly enabled, do not issue AI requests.
-    if: ${{ vars.BOUNTY_WORKER_ENABLED == 'true' }}
+    # Runs ONLY following a deliberate manual dispatch with issue inputs.
     runs-on: ubuntu-latest
     timeout-minutes: 20
     steps:
