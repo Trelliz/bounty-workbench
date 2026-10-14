@@ -1,0 +1,1 @@
+One-time free test of offline open-source model inference on Github standard runner; no payment method and no API token.
