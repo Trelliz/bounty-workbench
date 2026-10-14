@@ -1,6 +1,6 @@
 # Bounty Workbench — experimental cloud coding worker
 
-**Status: draft worker uploaded; GitHub Copilot CLI is blocked by policy. Local-model runner proof of concept succeeded. No autonomous coding or submission is active.**
+**Status: GitHub Actions Copilot CLI authentication failed, but interactive device-OAuth login on the user's own VPS now succeeds. Local-model runner also tested successfully. Automatic bounty patching and submission are not active.**
 
 This repository contains a manual, opt-in GitHub Actions worker that can ask GitHub Copilot CLI to draft a code patch for an open public issue. It is separate from the user's SatGate project and from the Linux VPS bounty scanner.
 
@@ -45,3 +45,7 @@ A future bridge would take **verified** candidates from the 2-minute VPS scanner
 - No payment method was added or needed for the open-source model test.
 
 - **2026-10-14, second Copilot CLI attempt**: A user-created fine-grained PAT stored as the `COPILOT_PAT` GitHub Actions secret was confirmed valid by the GitHub `/user` API (HTTP 200). After the user added the `Copilot Requests` account permission, the isolated Actions smoke test still returned `Access denied by policy settings`. [Test run](https://github.com/Trelliz/bounty-workbench/actions/runs/38491565424). The personal account's Copilot CLI policy/entitlement remains unverified. Do not automatically start this workflow or infer paid access is required.
+
+## Successful Copilot CLI login on VPS (2026-10-14)
+
+On the user's existing lightweight Ubuntu VPS, official Copilot CLI version 1.0.97 installed and authenticated using GitHub device OAuth via `copilot login --device-code`. The one-shot non-interactive prompt from `scripts/copilot_vps_oauth_check.sh` returned exactly `READY`. This confirms **authenticated programmatic Copilot CLI requests on the VPS**, in contrast with the preceding GitHub Actions runs that returned a policy error. It does not establish that the stored OAuth token will work on separate GitHub Actions runners. The CLI login credential is held in plaintext by root on the VPS due to unavailable keychain; treat it as sensitive. No job was submitted and no payout received. The next integration should run restricted, explicitly approved issue drafting on the VPS with a free-credit budget and no automatic PR submission.
