@@ -22,4 +22,4 @@ jobs:
           COPILOT_GITHUB_TOKEN: ${{ secrets.COPILOT_PAT }}
         run: |
           copilot -p 'Reply with exactly the word READY. Do not open files, use tools, or make changes.' \
-            --max-ai-credits=2 --no-ask-user --disable-builtin-mcps --available-tools='view' -s
+            --max-ai-credits=30 --no-ask-user --disable-builtin-mcps --available-tools='view' -s
