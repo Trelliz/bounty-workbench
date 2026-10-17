@@ -21,6 +21,32 @@ find /var/lib/bounty-copilot/code-reports -name result.json
 
 Stop the timer immediately with `systemctl disable --now bounty-copilot-bridge.timer`.
 
+## October 17, 2026: false-positive filtering on an existing VPS
+
+Two private inbox leads were mistakenly sourced from Bitcoin **mining block subsidies**
+(3.125 BTC) rather than payments to developers. They have been closed in the private
+inbox. The shared Python qualification function now requires an explicit
+contributor-payment context on the same or immediately preceding line and ignores
+block-reward, lottery and jackpot amounts. Offline regression tests pass.
+
+**Updating GitHub source alone does NOT update the existing VPS.** If the old bridge
+or inbox publisher is installed, update only those filters using this immutable,
+reviewable helper from Termius (root shell):
+
+```bash
+curl -fsSL https://raw.githubusercontent.com/Trelliz/bounty-workbench/cc0bf180c6117da5d447f3751d7b94813bf0e3b4/scripts/upgrade_bounty_filters.sh -o /tmp/upgrade-bounty-filters.sh && bash /tmp/upgrade-bounty-filters.sh
+```
+
+This changes only already-installed Python bridge/publisher files and keeps OAuth,
+PAT, VPN, systemd configuration, job queue and billing untouched. It does **not**
+deploy the auto-coding worker if that separate step has not been performed.
+The existing timers pick up the corrected filters on their next invocation.
+
+The correction remains heuristic, not an escrow or eligibility check. Search for
+funded bounties on purpose-built Bitcoin/Lightning bounty platforms and check
+the live funding/claim conditions and allowed AI usage before submitting work.
+Do not run unknown third-party project code on the VPN VPS.
+
 ## Important limitations and protection
 
 - **No third-party code execution**, package installation, project tests, GitHub PR creation, Git pushes or automatic payments.
