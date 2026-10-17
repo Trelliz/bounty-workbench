@@ -61,6 +61,42 @@ def count_sats(text: str) -> int:
             pass
     return max(amounts, default=0)
 
+# Amounts such as Bitcoin's 3.125 BTC mining subsidy are NOT payments to developers.
+# For a candidate to pass, the amount must be associated with an explicit offer to pay.
+PAYOUT_CUE = re.compile(
+    r'\b(?:bount(?:y|ies)|reward|payout|payment|compensation|'
+    r'pay(?:s|ing|able)?|offer(?:s|ed|ing)?|pledge(?:s|d)?|earn)\b', re.I)
+NON_DEVELOPER_REWARD = re.compile(
+    r'\b(?:block\s+(?:reward|bounty|jackpot)|mining\s+(?:reward|bounty|jackpot)|'
+    r'block\s+subsidy|block\s+solution|network\s+difficulty|'
+    r'lottery|jackpot|block\s+odds)\b', re.I)
+
+
+def count_coding_reward_sats(text: str) -> int:
+    """Conservative, unverified contributor-payout extraction.
+
+    Only consider a sat/BTC amount on a line that explicitly describes payment,
+    or on the immediately following line. Exclude mining/game prizes, where
+    'block bounty' is a protocol subsidy and not an offer to a developer.
+    This is a *screen*, NOT proof of a funded, claimable bounty.
+    """
+    lines = text.splitlines()
+    amounts = []
+    for index, line in enumerate(lines):
+        if not PAYOUT_CUE.search(line) or NON_DEVELOPER_REWARD.search(line):
+            continue
+        amount = count_sats(line)
+        # Accept the common "Reward:\n25,000 sats" format without searching
+        # unrelated later paragraphs for the largest cryptocurrency amount.
+        if not amount and index + 1 < len(lines):
+            following = lines[index + 1]
+            if not NON_DEVELOPER_REWARD.search(following):
+                amount = count_sats(following)
+        if amount:
+            amounts.append(amount)
+    return max(amounts, default=0)
+
+
 def github_issue(repo, number):
     """Fresh public metadata only. Never follow issue-supplied URLs."""
     request = urllib.request.Request(
@@ -132,9 +168,9 @@ def public_qualify(obj, repo, number, min_sats):
     title, body = obj.get('title') or '', obj.get('body') or ''
     if not isinstance(title, str) or not isinstance(body, str):
         return False, 'malformed-issue-text', 0
-    if 'bounty' not in (title + labels + body[:900]).lower() and 'reward' not in (title + labels).lower():
-        return False, 'no-bounty-language', 0
-    sats = count_sats(title + '\n' + body[:8500])
+    if not PAYOUT_CUE.search(title + '\n' + labels + '\n' + body[:8500]):
+        return False, 'no-contributor-payment-language', 0
+    sats = count_coding_reward_sats(title + '\n' + body[:8500])
     if sats < min_sats:
         return False, 'no-explicit-sufficient-mainnet-sats', sats
     return True, 'candidate-only-payment-unverified', sats
