@@ -18,7 +18,9 @@ if [ ! -x /usr/local/bin/copilot ]; then echo 'Copilot CLI missing'; exit 1; fi
 
 TMP=$(mktemp -d)
 trap 'rm -rf "$TMP"' EXIT
-BASE=https://raw.githubusercontent.com/Trelliz/bounty-workbench/main/scripts
+# Immutable reviewed worker revision: keep installation independent of later main changes.
+REF=57602cb19e3d75bec250ffa66f807dc1cfb73038
+BASE="https://raw.githubusercontent.com/Trelliz/bounty-workbench/${REF}/scripts"
 for F in bounty_copilot_bridge.py bounty_autocoder.py; do
   curl --fail --silent --show-error --location --max-time 35 \
     "$BASE/$F" --output "$TMP/$F"
