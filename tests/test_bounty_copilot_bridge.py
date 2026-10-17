@@ -25,7 +25,7 @@ class TestBountyCopilotBridge(unittest.TestCase):
             ('feat: Solo Block Lottery Radar, odds calculator',
              'Current Block Bounty Jackpot value (3.125 BTC + fees) at live spot price.'),
             ('feat: Multi-Coin Solo Block Lottery Radar',
-             'Coin-Specific Network Difficulty & Block Bounty Rewards:\\n'
+             'Coin-Specific Network Difficulty & Block Bounty Rewards:\n'
              'BTC: 3.125 BTC reward, LTC: 6.25 LTC; show mining jackpot'),
         ]:
             issue = {'state': 'open',
@@ -38,9 +38,9 @@ class TestBountyCopilotBridge(unittest.TestCase):
 
     def test_coding_payout_context_accepts_real_offer_not_block_reward(self):
         self.assertEqual(b.count_coding_reward_sats(
-            'Block reward 3.125 BTC\\nCoding bounty: 25,000 sats for fixing the UI'), 25000)
+            'Block reward 3.125 BTC\nCoding bounty: 25,000 sats for fixing the UI'), 25000)
         self.assertEqual(b.count_coding_reward_sats(
-            'Bounty for this fix:\\n20,000 sats'), 20000)
+            'Bounty for this fix:\n20,000 sats'), 20000)
         self.assertEqual(b.count_coding_reward_sats(
             'Bitcoin block reward 3.125 BTC; contributor reward 20,000 sats'), 0)
         self.assertEqual(b.count_coding_reward_sats(
