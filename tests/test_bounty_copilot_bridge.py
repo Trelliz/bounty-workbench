@@ -19,6 +19,36 @@ class TestBountyCopilotBridge(unittest.TestCase):
         self.assertEqual(b.count_sats('Reward 100,000 signet sats'), 0)
         self.assertEqual(b.count_sats('No specified amount'), 0)
 
+    def test_mining_block_subsidies_are_not_developer_bounties(self):
+        # Real-world false positives detected in the private bounty inbox.
+        for title, body in [
+            ('feat: Solo Block Lottery Radar, odds calculator',
+             'Current Block Bounty Jackpot value (3.125 BTC + fees) at live spot price.'),
+            ('feat: Multi-Coin Solo Block Lottery Radar',
+             'Coin-Specific Network Difficulty & Block Bounty Rewards:\\n'
+             'BTC: 3.125 BTC reward, LTC: 6.25 LTC; show mining jackpot'),
+        ]:
+            issue = {'state': 'open',
+                     'html_url': 'https://github.com/everyday3d/home-miner-studio/issues/14',
+                     'title': title, 'body': body, 'assignee': None, 'assignees': []}
+            self.assertFalse(b.public_qualify(
+                issue, 'everyday3d/home-miner-studio', 14, 10000)[0])
+        self.assertEqual(b.count_coding_reward_sats(
+            'Block Bounty Jackpot: 3.125 BTC reward'), 0)
+
+    def test_coding_payout_context_accepts_real_offer_not_block_reward(self):
+        self.assertEqual(b.count_coding_reward_sats(
+            'Block reward 3.125 BTC\\nCoding bounty: 25,000 sats for fixing the UI'), 25000)
+        self.assertEqual(b.count_coding_reward_sats(
+            'Bounty for this fix:\\n20,000 sats'), 20000)
+        self.assertEqual(b.count_coding_reward_sats(
+            'Bitcoin block reward 3.125 BTC; contributor reward 20,000 sats'), 0)
+        self.assertEqual(b.count_coding_reward_sats(
+            'This app shows 250,000 sats worth of block rewards'), 0)
+        self.assertEqual(b.count_coding_reward_sats(
+            'Payout: 0.0002 BTC for merged PR'), 20000)
+        self.assertEqual(b.count_coding_reward_sats('No contributor payment'), 0)
+
     def test_public_validation(self):
         issue = {'state': 'open', 'html_url': 'https://github.com/x/y/issues/10',
                  'title': 'Bounty: implement foo for 20,000 sats', 'body': 'Details',
