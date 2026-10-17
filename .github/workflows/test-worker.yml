@@ -15,3 +15,4 @@ jobs:
       - run: bash -n scripts/install_private_bounty_inbox.sh
 
       - run: bash -n scripts/install_bounty_autocoder.sh
+      - run: bash -n scripts/upgrade_bounty_filters.sh
