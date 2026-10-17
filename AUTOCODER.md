@@ -7,7 +7,7 @@
 Open Termius on the VPS that already runs the BTC scanner and has the working device-authorized Copilot CLI, then paste:
 
 ```bash
-curl -fsSL https://raw.githubusercontent.com/Trelliz/bounty-workbench/main/scripts/install_bounty_autocoder.sh -o /tmp/install-autocoder.sh && bash /tmp/install-autocoder.sh
+curl -fsSL https://raw.githubusercontent.com/Trelliz/bounty-workbench/6e56c3699a22bedffa85c643566c69cb70485f80/scripts/install_bounty_autocoder.sh -o /tmp/install-autocoder.sh && bash /tmp/install-autocoder.sh
 ```
 
 The existing 15-minute bridge timer is upgraded **in place**. It no longer spends credits on triage: instead, it searches the scanner's queue for open, unassigned bounty issues with explicit advertised rewards of >= 10,000 sats and public repositories smaller than ~12 MB. On an eligible issue, it clones only the public source, selects small relevant tracked code files, asks the **already authenticated GitHub Copilot CLI** for a unified source patch, checks that the patch touches only those files and can be applied, and saves a diff and result JSON.
