@@ -1,0 +1,44 @@
+name: Probe funded one-dollar task (read-only)
+on:
+  push:
+    paths: ['.github/workflows/probe-one-dollar.yml']
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  inspect:
+    runs-on: ubuntu-latest
+    timeout-minutes: 3
+    steps:
+      - name: Inspect current public bounty requirements (no credentials)
+        shell: bash
+        run: |
+          python3 - <<'PY'
+          import urllib.request, json, re, html
+          urls = [
+            'https://gofrantic.com/bounties/141',
+            'https://api.gofrantic.com/v1/bounties/141',
+            'https://api.gofrantic.com/v1/board',
+          ]
+          for url in urls:
+              print('URL:', url)
+              try:
+                  req = urllib.request.Request(url, headers={'User-Agent':'public-bounty-inspector/1.0'})
+                  with urllib.request.urlopen(req, timeout=15) as response:
+                      raw = response.read(400_000).decode('utf-8', errors='replace')
+                      print('STATUS:', response.status)
+                      if raw.lstrip().startswith(('{','[')):
+                          try:
+                              doc = json.loads(raw)
+                              print('JSON:',json.dumps(doc,ensure_ascii=False)[:18000])
+                          except ValueError:
+                              print('JSON prefix:',raw[:1000])
+                      else:
+                          block = re.search(r'<main[^>]*>(.*?)</main>',raw,re.I|re.S)
+                          src=block.group(1) if block else raw
+                          src=re.sub(r'<script[^>]*>.*?</script>',' ',src,flags=re.I|re.S)
+                          src=re.sub(r'<style[^>]*>.*?</style>',' ',src,flags=re.I|re.S)
+                          print('BODY:',html.unescape(re.sub(r'<[^>]+>',' ',src))[:14000])
+              except Exception as e:
+                  print('ERROR:',type(e).__name__,str(e)[:180])
+          PY
