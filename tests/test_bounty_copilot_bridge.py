@@ -49,6 +49,32 @@ class TestBountyCopilotBridge(unittest.TestCase):
             'Payout: 0.0002 BTC for merged PR'), 20000)
         self.assertEqual(b.count_coding_reward_sats('No contributor payment'), 0)
 
+    def test_quarantine_verified_nonpayable_leads(self):
+        # Two live false positives from our private scanner inbox (Oct 2026).
+        demo = {'state': 'open',
+                'html_url': 'https://github.com/Djbrl/bitbounty-demo/issues/4',
+                'title': 'README: show a payout in sats and FCFA, step by step',
+                'body': 'New users ask how to show "you received 16 129 sats (10 000 FCFA)". '
+                        'The README has one-line examples but no complete one.\n'
+                        'Add a Show a payout section with a runnable example.',
+                'assignee': None, 'assignees': [],
+                'labels': [{'name': 'bounty: open'}, {'name': 'funded'}]}
+        self.assertFalse(b.public_qualify(demo, 'Djbrl/bitbounty-demo', 4, 10000)[0])
+        boltz = {'state': 'open',
+                 'html_url': 'https://github.com/BoltzExchange/boltz-backend/issues/1513',
+                 'title': 'Request to co-sign an unspent 6,300,243-sat funding output',
+                 'body': 'Funds from my funding transaction remain stuck. '
+                         'I would like to pay a 5% bounty, 315,012 sat, '
+                         'for the engineer from the node operator.',
+                 'assignee': None, 'assignees': []}
+        self.assertEqual(b.public_qualify(boltz, 'BoltzExchange/boltz-backend',
+                                           1513, 10000)[1],
+                         'private-funds-recovery-not-open-coding-bounty')
+        self.assertEqual(b.count_coding_reward_sats(
+            'Payout example:\nNew users ask how to show you received 16 129 sats'), 0)
+        self.assertEqual(b.count_coding_reward_sats(
+            'Bounty for this fix:\n20,000 sats'), 20000)
+
     def test_public_validation(self):
         issue = {'state': 'open', 'html_url': 'https://github.com/x/y/issues/10',
                  'title': 'Bounty: implement foo for 20,000 sats', 'body': 'Details',
