@@ -1,25 +1,11 @@
-# Nitrosend Safe Mode: owner-reviewed single-recipient send
+# Safe Mode MAP approval: verified owner decision (October 23, 2026)
 
-This is a factual, timestamped account of a first-person email approval workflow. It records what was observed, not a claim that an email was delivered.
-
-- **Environment:** Nitrosend AI-native email, lAIboratory sender account.
-- **Scope:** one self-controlled recipient on a single-contact list; no third-party audience.
-- **Campaign reference:** `15167`, "lAIboratory owner-only Safe Mode review".
-- **Review:** a Safe Mode campaign send was placed on hold for the account owner's approval.
-- **Approval:** the account owner approved the exact one-recipient send. Nitrosend issued a signed approval-decision receipt at **2026-10-23 23:40 UTC**:
-  [Nitrosend signed Safe Mode approval receipt](https://runx.ai/r/210b9ae6fab8313729469d0df9f872b2b6ef116da2208679c908576b617de23a).
-- **Scheduling:** at the last account read, the campaign status was `scheduled`, with intended send time **2026-10-24 00:04:09 UTC** (03:04:09 Moscow time).
-- **Observed outcome at this point:** approval received; the actual campaign send had **not yet started**. Recipient delivery is **not yet established**.
-
-## Reproducible review approach
-
-1. Prepare a single-recipient email campaign on a sender account you control.
-2. Request Safe Mode review and inspect the pending approval decision.
-3. Have the actual account owner review the content and audience; never bypass owner approval.
-4. Record the signed decision receipt and its UTC timestamp.
-5. Separately inspect campaign delivery totals after its scheduled time. Do not infer delivery from approval alone.
-6. If it sends, document the actual status and any separate verifiable send receipt; otherwise report the true blocker.
-
-## Limitations
-
-The signed URL above is evidence of the **approval decision**, not proof of provider delivery or a payout. No credentials, recipient email address, mailing address, or private message content are included here.
+- **Environment:** lAIboratory Nitrosend sender; GitHub Actions Ubuntu 24.04, Node v22.23.3, npm 10.9.9, `mailschema@0.3.2`. A single recipient was the owner's own address.
+- **Workflow:** An API-key-originated campaign was held by Safe Mode; the owner provided the physical mailing address and approved the exact single-contact audience. Operator actions were needed for account setup, key handling and the review decision; the automated validation ran without further human steps.
+- **Timing:** Safe Mode was already enabled when the campaign was created by 22:54 UTC. Owner decision: 23:40:58 UTC (under 47 minutes from campaign creation). The exact Safe Mode toggle timestamp was not logged, so its exact elapsed time cannot be established.
+- **MIME extraction:** Saved the original approval email as `notes/approval-142.eml` in a private repository. Ran `npx --yes mailschema@0.3.2 message notes/approval-142.eml > description.json`.
+- **Validation:** Downloaded `https://mailschema.org/artifacts/map-0.3/contracts/campaign-send-approval-0.1.json` as `contract.json`; ran `npx --yes mailschema@0.3.2 description description.json --contract contract.json`. Output: `Valid MAP 0.3 description urn:uuid:1795ddb6-5c62-5f07-a5ca-be325b4ee8c5`; description digest `sha-256:7df09d9f4e0fe94a878ecbec2e6b4c397540d0bcd3143c97008732d38f4680da`.
+- **Term check:** Installed `mailschema@0.3.2` with npm; JavaScript imported `digest`, removed `terms.version`, recomputed `sha-256:9c539014eb26362e39758cff93143a0de0f8abd2210afd3eb90c8d588abfadc3`. Output: `MATCH: true`.
+- **Decision:** Approved, because this campaign addressed only the owner. [Signed approval receipt](https://runx.ai/r/210b9ae6fab8313729469d0df9f872b2b6ef116da2208679c908576b617de23a). Approval is not proof of email delivery.
+- **Slowdown and reproducible gap:** `npx --yes mailschema@0.3.2 --version` fails with `Unknown option '--version'`, despite the JavaScript README discussing a version flag. `npm view mailschema@0.3.2 version` returns `0.3.2`. Clarify version-reporting support in CLI docs.
+- **Suggested improvement:** Publish a copy-paste MIME-extraction, contract-validation and `terms.version` digest example together.
