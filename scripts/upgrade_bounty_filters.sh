@@ -14,7 +14,7 @@ if ! command -v curl >/dev/null || ! command -v python3 >/dev/null; then
 fi
 
 # Immutable commit containing vetted false-positive fix and its regression tests.
-REF="57602cb19e3d75bec250ffa66f807dc1cfb73038"
+REF="400dd1468e5c8e4f732936e96749b924d4dfecd3"
 BASE="https://raw.githubusercontent.com/Trelliz/bounty-workbench/${REF}/scripts"
 targets=()
 for candidate in \
