@@ -74,9 +74,9 @@ NON_DEVELOPER_REWARD = re.compile(
 
 def example_only_amount(line: str) -> bool:
     """Reject quoted payout examples that do not offer developer compensation."""
-    return (bool(re.search(r'\\b(?:how to show|how to display|example|sample|sample output)\\b', line, re.I))
-            and bool(re.search(r'\\b(?:you received|sats?|satoshis)\\b', line, re.I))
-            and not bool(re.search(r'\\b(?:reward for|bounty for|pay contributors?|pay developers?|funded reward)\\b', line, re.I)))
+    return (bool(re.search(r'\b(?:how to show|how to display|example|sample|sample output)\b', line, re.I))
+            and bool(re.search(r'\b(?:you received|sats?|satoshis)\b', line, re.I))
+            and not bool(re.search(r'\b(?:reward for|bounty for|pay contributors?|pay developers?|funded reward)\b', line, re.I)))
 
 
 def count_coding_reward_sats(text: str) -> int:
@@ -176,8 +176,8 @@ def public_qualify(obj, repo, number, min_sats):
     if not isinstance(title, str) or not isinstance(body, str):
         return False, 'malformed-issue-text', 0
     # A co-signature to recover one person's own funds is not an open coding task.
-    if (re.search(r'\\b(?:co[- ]?sign|co[- ]?signature)\\b', title, re.I)
-            and re.search(r'\\b(?:my funds|my funding|unspent|stuck funds|your LND node)\\b',
+    if (re.search(r'\b(?:co[- ]?sign|co[- ]?signature)\b', title, re.I)
+            and re.search(r'\b(?:my funds|my funding|unspent|stuck funds|your LND node)\b',
                           title + '\n' + body[:3000], re.I)):
         return False, 'private-funds-recovery-not-open-coding-bounty', 0
     if not PAYOUT_CUE.search(title + '\n' + labels + '\n' + body[:8500]):
