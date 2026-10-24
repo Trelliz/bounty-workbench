@@ -9,3 +9,12 @@
 - **Decision:** Approved, because this campaign addressed only the owner. [Signed approval receipt](https://runx.ai/r/210b9ae6fab8313729469d0df9f872b2b6ef116da2208679c908576b617de23a). Approval is not proof of email delivery.
 - **Slowdown and reproducible gap:** `npx --yes mailschema@0.3.2 --version` fails with `Unknown option '--version'`, despite the JavaScript README discussing a version flag. `npm view mailschema@0.3.2 version` returns `0.3.2`. Clarify version-reporting support in CLI docs.
 - **Suggested improvement:** Publish a copy-paste MIME-extraction, contract-validation and `terms.version` digest example together.
+
+## Delivery verification — 2026-10-24 00:04 UTC
+
+- **Campaign:** Nitrosend `15167`, `lAIboratory owner-only Safe Mode review`.
+- **Scheduled:** 2026-10-24 00:04:09 UTC; Nitrosend campaign status changed to `completed` by 00:04:12 UTC.
+- **Provider delivery counters (queried 00:04:20 UTC):** `requested_recipients=1`, `recipients=1`, `sent=1`, `processed=1`, `failed=0`, `pending=0`, `progress_percent=100`.
+- **Provider analytics (queried 00:04:26 UTC):** `email:sent=1`, `email:delivered=1`, `email:bounced=0`.
+- **Independent inbox observation:** the account owner's Gmail received the non-test email with subject `Safe Mode approval test` at **2026-10-24 00:04:12 UTC**, matching the scheduled campaign. The private message ID and recipient address are intentionally omitted from this public report.
+- **Interpretation:** this establishes that the approved one-recipient campaign actually sent and arrived in the owner's inbox. The approval receipt above proves the separate owner decision. Neither observation establishes Frantic bounty acceptance, payment, or a new signed send receipt for this campaign.
