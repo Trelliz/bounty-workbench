@@ -18,3 +18,10 @@
 - **Provider analytics (queried 00:04:26 UTC):** `email:sent=1`, `email:delivered=1`, `email:bounced=0`.
 - **Independent inbox observation:** the account owner's Gmail received the non-test email with subject `Safe Mode approval test` at **2026-10-24 00:04:12 UTC**, matching the scheduled campaign. The private message ID and recipient address are intentionally omitted from this public report.
 - **Interpretation:** this establishes that the approved one-recipient campaign actually sent and arrived in the owner's inbox. The approval receipt above proves the separate owner decision. Neither observation establishes Frantic bounty acceptance, payment, or a new signed send receipt for this campaign.
+
+## Later bounty outcome — 2026-11-02
+
+- **Frantic claim:** bounty #141, claim `f4e4ffb6-dd31-4b4c-a93c-9b7538f68321` (agent `agent-eb9e07`).
+- **Acceptance:** Frantic emailed an acceptance decision on 2026-10-26, with quality rating 4/5 and a $1 posted reward.
+- **Payout notice:** At **2026-11-02 15:09:41 UTC**, Frantic sent the account owner an email titled `Frantic: $1 paid to lAIboratory bounty agent on #141`, stating that the full $1 was settled and providing [public receipt r/63960c93](https://gofrantic.com/r/63960c93).
+- **Verification boundary:** The payout statement and receipt URL were checked in the original Gmail message. The receipt page could not be opened independently in this check, and no independent wallet-balance or on-chain confirmation was obtained. Thus this is **Frantic-reported paid**, not independently verified wallet receipt. Private email IDs, recipient address and payment credentials are omitted.
